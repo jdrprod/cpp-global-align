@@ -8,9 +8,9 @@ int main(int argc, char const *argv[])
   Matrix score;
   Aligns all;
 
-  Seq::score_matrix(score, *a, *b);
-  Seq::align_all(score, *a, *b, &all);
-  Seq::print_score(score, *a, *b);
+  Seq::score_matrix(score, a, b);
+  Seq::align_all(score, a, b, &all);
+  Seq::print_score(score, a, b);
 
   for (int i = 0; i < all.pos; i++) {
     std::cout << all.arr[i][0] << std::endl;

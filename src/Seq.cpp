@@ -27,10 +27,10 @@ int Seq::subs(char a, char b) {
 }
 
 
-void Seq::align_all(Matrix M, Seq seq1, Seq seq2, Aligns * all) {
+void Seq::align_all(Matrix M, Seq * seq1, Seq * seq2, Aligns * all) {
   Seq::_align_all(
     M,
-    seq1.len(), seq2.len(),
+    seq1->len(), seq2->len(),
     seq1, seq2, "", "", all
   );
 }
@@ -53,7 +53,7 @@ void Seq::align_all(Matrix M, Seq seq1, Seq seq2, Aligns * all) {
  */
 void Seq::_align_all(
   Matrix M, int i, int j, 
-  Seq seq1, Seq seq2,
+  Seq * seq1, Seq * seq2,
   std::string A, std::string B,
   Aligns * all) {
 
@@ -66,21 +66,21 @@ void Seq::_align_all(
     // Testing if it can be an indel
     if (M[i][j] == M[i-1][j] + Seq::gap) {
       string B1 = '-' + B;
-      string A1 = seq1.pos(i - 1) + A;
+      string A1 = seq1->pos(i - 1) + A;
       Seq::_align_all(M, i-1, j, seq1, seq2, A1, B1, &options);
     }
     
     // Testing if it can be an indel (2)
     if (M[i][j] == M[i][j-1] + Seq::gap) {
-      string B2 = seq2.pos(j - 1) + B;
+      string B2 = seq2->pos(j - 1) + B;
       string A2 = '-' + A;
       Seq::_align_all(M, i, j-1, seq1, seq2, A2, B2, &options);
     }
 
     // Testing if it can be a match or sub (2)
-    if (M[i][j] == M[i-1][j-1] + Seq::subs(seq1.pos(i - 1), seq2.pos(j - 1))) {
-      string B3 = seq2.pos(j - 1) + B;
-      string A3 = seq1.pos(i - 1) + A;
+    if (M[i][j] == M[i-1][j-1] + Seq::subs(seq1->pos(i - 1), seq2->pos(j - 1))) {
+      string B3 = seq2->pos(j - 1) + B;
+      string A3 = seq1->pos(i - 1) + A;
       Seq::_align_all(M, i-1, j-1, seq1, seq2, A3, B3, &options);
     }
 
@@ -96,14 +96,14 @@ void Seq::_align_all(
 
     // process trailing chars
     while ( i > 0 ) {
-      A = seq1.pos(i - 1) + A;
+      A = seq1->pos(i - 1) + A;
       B = '-' + B;
       i -= 1;
     }
 
     while ( j > 0 ) {
       A = '-' + A;
-      B = seq2.pos(j - 1) + B;
+      B = seq2->pos(j - 1) + B;
       j -= 1;
     }
 
@@ -115,40 +115,40 @@ void Seq::_align_all(
 }
 
 
-void Seq::align(Matrix M, Seq seq1, Seq seq2) {
+void Seq::align(Matrix M, Seq * seq1, Seq * seq2) {
   
   string A = "";
   string B = "";
 
-  int i = seq1.m_len;
-  int j = seq2.m_len;
+  int i = seq1->m_len;
+  int j = seq2->m_len;
 
   while ( i > 0 && j > 0 ) {
     if (M[i][j] == M[i-1][j] - 2) {
       B = '-' + B;
-      A = seq1.pos(i - 1) + A;
+      A = seq1->pos(i - 1) + A;
       i -= 1;
     } else if (M[i][j] == M[i][j-1] - 2) {
-      B = seq2.pos(j - 1) + B;
+      B = seq2->pos(j - 1) + B;
       A = '-' + A;
       j -= 1;
     } else {
-      B = seq2.pos(j - 1) + B;
-      A = seq1.pos(i - 1) + A;
+      B = seq2->pos(j - 1) + B;
+      A = seq1->pos(i - 1) + A;
       i -= 1;
       j -= 1;
     }
   }
 
   while ( i > 0 ) {
-    A = seq1.pos(i - 1) + A;
+    A = seq1->pos(i - 1) + A;
     B = '-' + B;
     i -= 1;
   }
 
   while ( j > 0 ) {
     A = '-' + A;
-    B = seq2.pos(j - 1) + B;
+    B = seq2->pos(j - 1) + B;
     j -= 1;
   }
 
@@ -157,7 +157,7 @@ void Seq::align(Matrix M, Seq seq1, Seq seq2) {
 }
 
 
-void Seq::score_matrix(Matrix M, Seq seq1, Seq seq2) {
+void Seq::score_matrix(Matrix M, Seq * seq1, Seq * seq2) {
 
   int score_del = 0;
   int score_ins = 0;
@@ -165,20 +165,20 @@ void Seq::score_matrix(Matrix M, Seq seq1, Seq seq2) {
 
   // INITIALIZING SCORE MATRIX
   
-  for (int j = 0; j <= seq2.m_len; j++)
+  for (int j = 0; j <= seq2->m_len; j++)
     M[0][j] = -j;
 
-  for (int j = 0; j <= seq1.m_len; j++)
+  for (int j = 0; j <= seq1->m_len; j++)
     M[j][0] = -j;
 
   // FILL THE SCORE MATRIX
 
-  for (int i = 1; i <= seq1.m_len; i++) {
-    for (int j = 1; j <= seq2.m_len; j++) {
+  for (int i = 1; i <= seq1->m_len; i++) {
+    for (int j = 1; j <= seq2->m_len; j++) {
       
       score_del = M[i-1][j] + Seq::gap;
       score_ins = M[i][j-1] + Seq::gap;
-      score_sub = M[i-1][j-1] + Seq::subs(seq1.pos(i-1), seq2.pos(j-1));
+      score_sub = M[i-1][j-1] + Seq::subs(seq1->pos(i-1), seq2->pos(j-1));
 
       M[i][j] = max(score_sub, max(score_del, score_ins));
 
@@ -187,10 +187,10 @@ void Seq::score_matrix(Matrix M, Seq seq1, Seq seq2) {
 }
 
 
-void Seq::print_score(Matrix M, Seq seq1, Seq seq2) {
-  for (int i = 0; i <= seq1.m_len; i++) {
-    for (int j = 0; j <= seq2.m_len; j++) {
-      char c = i > 0 ? seq1.pos(i-1) : '.';
+void Seq::print_score(Matrix M, Seq * seq1, Seq * seq2) {
+  for (int i = 0; i <= seq1->m_len; i++) {
+    for (int j = 0; j <= seq2->m_len; j++) {
+      char c = i > 0 ? seq1->pos(i-1) : '.';
       printf("%3d, ", M[i][j]);
     }
     printf("\n");

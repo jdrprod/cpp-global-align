@@ -31,10 +31,10 @@ public:
   Seq(string label, string seq);
   char  pos(int i);
   int   len();
-  static void align_all(Matrix M, Seq seq1, Seq seq2, Aligns * all);
-  static void score_matrix(Matrix M, Seq seq1, Seq seq2);
-  static void print_score(Matrix M, Seq seq1, Seq seq2);
-  static void align(Matrix M, Seq seq1, Seq seq2);
+  static void align_all(Matrix M, Seq * seq1, Seq * seq2, Aligns * all);
+  static void score_matrix(Matrix M, Seq * seq1, Seq * seq2);
+  static void print_score(Matrix M, Seq * seq1, Seq * seq2);
+  static void align(Matrix M, Seq * seq1, Seq * seq2);
 
 private:
   // custom attributes
@@ -49,8 +49,8 @@ private:
   static int subs(char a, char b);
   static void _align_all(
     Matrix M, int i, int j,
-    Seq seq1, Seq seq2,
-    std::string A, std::string B,
+    Seq * seq1, Seq * seq2,
+    string A, string B,
     Aligns * all);
   
 };
