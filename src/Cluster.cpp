@@ -6,11 +6,11 @@ string Cluster::getNewickIntermediate() {
   string rep = "";
 
   if (subClusters.size() == 0) {
-    rep += elements[0].get_label();
+    rep += elements[0].to_string();
   } else {
 
     rep += "(";
-    for (int i = 0; i < subClusters.size(); i++) {
+    for (int i = 0; i < subClusters.size(); i++) {
       rep += subClusters[i].getNewickIntermediate();
       if (i < subClusters.size()-1)
         rep += ",";
