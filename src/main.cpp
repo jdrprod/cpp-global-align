@@ -17,8 +17,8 @@ int main(int argc, char const *argv[])
   seqList.push_back( seq4 );
 
   Cluster c = Cluster(seqList);
-
-  c.join();
+  
+  c.order();
   cout << c.getNewick() << endl;
 
   return 0;

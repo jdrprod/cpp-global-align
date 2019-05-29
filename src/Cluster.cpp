@@ -119,7 +119,7 @@ void Cluster::clusterize() {
 }
 
 
-void Cluster::join() {
+void Cluster::order() {
 
   Cluster top = Cluster(Seq("root", ""));
   
