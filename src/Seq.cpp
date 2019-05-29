@@ -21,6 +21,10 @@ int Seq::len() {
   return m_len;
 }
 
+string Seq::get_label() {
+  return m_label;
+}
+
 
 int Seq::subs(char a, char b) {
   return a == b ? Seq::match : Seq::sub;

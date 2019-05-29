@@ -31,6 +31,8 @@ public:
   Seq(string label, string seq);
   char  pos(int i);
   int   len();
+  float linkage(Seq another_seq);
+  string get_label();
   static void align_all(Matrix M, Seq * seq1, Seq * seq2, Aligns * all);
   static void score_matrix(Matrix M, Seq * seq1, Seq * seq2);
   static void print_score(Matrix M, Seq * seq1, Seq * seq2);
