@@ -16,6 +16,7 @@ class Cluster
     Cluster(Cluster cluster1, Cluster cluster2);
     double linkage(Cluster aCluster);
     void clusterize();
+    void join();
     void printElements();
     void getElements();
     string getNewick();

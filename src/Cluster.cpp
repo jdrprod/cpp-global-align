@@ -70,12 +70,11 @@ double Cluster::linkage(Cluster aCluster) {
   int size = size1*size2;
 
   for (Seq s1 : elements) {
-    for (Seq s2 : elements) {
+    for (Seq s2 : aCluster.elements) {
       Seq::score_matrix(mscore, &s1, &s2);
-      score +=  mscore[s1.len()][s2.len()];
+      score += mscore[s1.len()][s2.len()];
     }
   }
-
   return  (double) score / size;
 }
 
@@ -85,7 +84,7 @@ void Cluster::clusterize() {
     int best_i = 0;
     int best_j = 0;
     int best = 0;
-    int d = 0;
+    double d = 0;
 
     vector<Cluster> new_subClusters;
 
@@ -119,3 +118,54 @@ void Cluster::clusterize() {
   }
 }
 
+
+void Cluster::join() {
+
+  Cluster top = Cluster(Seq("root", ""));
+  
+  vector<int> marked;
+
+  int best_i = 0;
+  int best_j = 0;
+  int best = 0;
+  double d = 0;
+
+  for (int i = 0; i < subClusters.size(); i++) {
+    for (int j = i+1; j < subClusters.size(); j++) {
+      d = subClusters[i].linkage(subClusters[j]);
+      if (d > best) {
+        best_i = i;
+        best_j = j;
+        best = d;
+      }
+    }
+  }
+
+  top = Cluster(subClusters[best_i], subClusters[best_j]);
+
+  marked.push_back(best_i);
+  marked.push_back(best_j);
+
+  int best_next = 0;
+  int best_next_score = 0;
+
+  while (marked.size() < subClusters.size()) {
+    for (int i = 0; i < subClusters.size(); i++) {
+      if (count(marked.begin(), marked.end(), i) == 0) {
+        d = top.linkage(subClusters[i]);
+        if (d >= best_next_score) {
+          best_next = i;
+          best_next_score = d;
+        }
+      }
+    }
+
+    marked.push_back(best_next);
+    top = Cluster(top, subClusters[best_next]);
+    best_next = 0;
+    best_next_score = 0;
+  }
+
+  subClusters.clear();
+  subClusters.push_back(top);
+}
