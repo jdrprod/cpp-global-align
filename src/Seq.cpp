@@ -199,7 +199,7 @@ void Seq::print_score(Matrix M, Seq * seq1, Seq * seq2) {
   for (int i = 0; i <= seq1->m_len; i++) {
     for (int j = 0; j <= seq2->m_len; j++) {
       char c = i > 0 ? seq1->pos(i-1) : '.';
-      printf("%3d, ", M[i][j]);
+      printf("%4d ", M[i][j]);
     }
     printf("\n");
   }
